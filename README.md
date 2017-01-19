@@ -8,7 +8,7 @@ iOS | Android
 <img title="iOS" src="https://github.com/marcshilling/react-native-image-picker/blob/master/images/ios-image.png"> | <img title="Android" src="https://github.com/marcshilling/react-native-image-picker/blob/master/images/android-image.png">
 
 #### _Before you open an issue_
-This library started as a basic bridge of the native iOS image picker, and I want to keep it that way. As such, functionality beyond what the native `UIImagePickerController` supports will not be supported here. **Multiple image selection, more control over the crop tool, and landscape support** are things missing from the native iOS functionality - **not issues with my library**. If you need these things, [react-native-image-crop-picker](https://github.com/ivpusic/react-native-image-crop-picker) might be a better choice for you.    
+This library started as a basic bridge of the native iOS image picker, and I want to keep it that way. As such, functionality beyond what the native `UIImagePickerController` supports will not be supported here. **Multiple image selection, more control over the crop tool, and landscape support** are things missing from the native iOS functionality - **not issues with my library**. If you need these things, [react-native-image-crop-picker](https://github.com/ivpusic/react-native-image-crop-picker) might be a better choice for you.   
 
 ## Table of contents
 - [Install](#install)
@@ -19,15 +19,13 @@ This library started as a basic bridge of the native iOS image picker, and I wan
 
 ## Install
 
+### NOTE: THIS PACKAGE IS NOW BUILT FOR REACT NATIVE 0.40 OR GREATER! IF YOU NEED TO SUPPORT REACT NATIVE < 0.40, YOU SHOULD INSTALL THIS PACKAGE `@0.24`
+
 `npm install react-native-image-picker@latest --save`
 
 ### Automatic Installation
 
-**React Native >= 0.29**
-`$react-native link`
-
-**React Native < 0.29**
-`$rnpm link`
+`react-native link`
 
 IMPORTANT NOTE: You'll still need to perform step 4 for iOS and step 3 for Android of the manual instructions below.
 
@@ -46,7 +44,7 @@ IMPORTANT NOTE: You'll still need to perform step 4 for iOS and step 3 for Andro
 
     ```gradle
     include ':react-native-image-picker'
-    project(':react-native-image-picker').projectDir = new File(settingsDir, '../node_modules/react-native-image-picker/android')
+    project(':react-native-image-picker').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-image-picker/android')
     ```
 2. Add the compile line to the dependencies in `android/app/build.gradle`:
 
@@ -65,7 +63,7 @@ IMPORTANT NOTE: You'll still need to perform step 4 for iOS and step 3 for Andro
 
     ```java
     import com.imagepicker.ImagePickerPackage; // <-- add this import
-    
+
     public class MainApplication extends Application implements ReactApplication {
         @Override
         protected List<ReactPackage> getPackages() {
@@ -112,14 +110,16 @@ ImagePicker.showImagePicker(options, (response) => {
     console.log('User tapped custom button: ', response.customButton);
   }
   else {
-    // You can display the image using either data...
-    const source = {uri: 'data:image/jpeg;base64,' + response.data, isStatic: true};
+    let source;
 
-    // or a reference to the platform specific asset location
-    if (Platform.OS === 'ios') {
-      const source = {uri: response.uri.replace('file://', ''), isStatic: true};
+    // You can display the image using either data...
+    source = { uri: 'data:image/jpeg;base64,' + response.data };
+
+    // Or a reference to the platform specific asset location
+    if (Platform.OS === 'android') {
+      source = { uri: response.uri };
     } else {
-      const source = {uri: response.uri, isStatic: true};
+      source = { uri: response.uri.replace('file://', '') };
     }
 
     this.setState({
